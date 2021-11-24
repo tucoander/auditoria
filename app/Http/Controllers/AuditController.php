@@ -12,4 +12,9 @@ class AuditController extends Controller
 
         return view('welcome', ['msg' => $msg]);
     }
+
+    public function create()
+    {
+        return view('audit.create');
+    }
 }

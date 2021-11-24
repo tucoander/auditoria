@@ -16,3 +16,4 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuditController;
 
 Route::get('/', [AuditController::class, 'index']);
+Route::get('/audit/create', [AuditController::class, 'create']);
