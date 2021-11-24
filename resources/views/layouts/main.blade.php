@@ -36,7 +36,7 @@
                     <li><a href="#" class="nav-link px-2 text-white">FAQs</a></li>
                     <li><a href="#" class="nav-link px-2 text-white">About</a></li>
                 </ul>
-                
+
                 <div class="text-end">
                     <button type="button" class="btn btn-outline-light me-2">Login</button>
                     <button type="button" class="btn btn-warning">Sign-up</button>
@@ -45,7 +45,7 @@
         </div>
     </header>
 
-    <div class="container">
+    <div class="container" >
         @yield('content')
     </div>
 

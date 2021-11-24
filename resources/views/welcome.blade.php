@@ -4,6 +4,11 @@
 
 @section('content')
 
-    <h1>Hello Laravel</h1>
+
+<div class="card" style="margin-top: 10px; height: 72vh;">
+    <div class="card-body">
+        <h1>{{$title}}</h1>
+    </div>
+</div>
 
 @endsection
