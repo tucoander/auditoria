@@ -13,7 +13,12 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-use App\Http\Controllers\AuditController;
+Route::get('/', function () {
+    return view('welcome');
+});
 
-Route::get('/', [AuditController::class, 'index']);
-Route::get('/audit/create', [AuditController::class, 'create']);
+Route::get('/dashboard', function () {
+    return view('dashboard');
+})->middleware(['auth'])->name('dashboard');
+
+require __DIR__.'/auth.php';
