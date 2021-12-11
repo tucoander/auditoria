@@ -21,7 +21,11 @@ Route::get('/', function () {
 //Products
 Route::get('/products', [ProductController::class, 'index'])
     ->middleware(['auth'])
-    ->name('products');;
+    ->name('products');
+
+Route::post('/products', [ProductController::class, 'store'])
+->middleware(['auth'])
+->name('products_store');
 
 Route::get('/dashboard', function () {
     return view('dashboard');
