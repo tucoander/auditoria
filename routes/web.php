@@ -27,6 +27,10 @@ Route::post('/products', [ProductController::class, 'store'])
 ->middleware(['auth'])
 ->name('products_store');
 
+Route::get('/products/show', [ProductController::class, 'show'])
+->middleware(['auth'])
+->name('products_show');
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth'])->name('dashboard');

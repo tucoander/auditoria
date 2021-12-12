@@ -11,7 +11,7 @@ class ProductController extends Controller
 {
     public function index()
     {
-        return view('products\create');
+        return view('products/create');
     }
 
     public function store(Request $request)
@@ -31,5 +31,13 @@ class ProductController extends Controller
         } else {
             return redirect('/products')->with('msg', 'Produto já possui cadastro, favor revisar');
         }
+    }
+
+    public function show(){
+        $product = new ProductModel();
+
+        $available_itens = $product::all();
+
+        return view('products/show', ['products'=> $available_itens]);
     }
 }
