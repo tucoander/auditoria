@@ -13,10 +13,10 @@ class CreateCartonTable extends Migration
      */
     public function up()
     {
-        Schema::create('carton', function (Blueprint $table) {
+        Schema::create('cartons', function (Blueprint $table) {
             $table->uuid('id');
             $table->string('shipping_hu');
-            $table->string('document');
+            $table->string('document')->nullable();
             $table->timestamps();
         });
     }
