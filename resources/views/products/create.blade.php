@@ -18,7 +18,8 @@
                 <label for="description"></label>
                 <input type="text" class="form-control" id="description" name="description" placeholder="Descrição do produto">
             </div>
-            <input type="submit" value="Criar Evento" class="btn btn-primary">
+            
+            <input type="submit" value="Criar Evento" class="btn btn-primary" style="margin-top:20px;">
         </form>
     </div>
     <div>
