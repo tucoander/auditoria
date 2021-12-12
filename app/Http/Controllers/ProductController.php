@@ -18,7 +18,7 @@ class ProductController extends Controller
     {
         $product = new ProductModel();
 
-        $productAlreadyExists = ProductModel::where('partnumber', $request->partnumber)->count();
+        $productAlreadyExists = $product::where('partnumber', $request->partnumber)->count();
 
         if ($productAlreadyExists < 1) {
             $product->id = Str::uuid();
@@ -33,11 +33,12 @@ class ProductController extends Controller
         }
     }
 
-    public function show(){
+    public function show()
+    {
         $product = new ProductModel();
 
         $available_itens = $product::all();
 
-        return view('products/show', ['products'=> $available_itens]);
+        return view('products/show', ['products' => $available_itens]);
     }
 }
