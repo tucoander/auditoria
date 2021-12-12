@@ -11,6 +11,7 @@ class ProductModel extends Model
     use HasFactory;
 
     protected $table = 'products';
+    protected $keyType = 'string';
 
     public function cartons(){
         return $this->belongsToMany('App\Models\Carton');
