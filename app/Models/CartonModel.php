@@ -9,6 +9,9 @@ class CartonModel extends Model
 {
     use HasFactory;
 
+    protected $table = 'cartons';
+    protected $keyType = 'string';
+
     public function itemsPacked(){
         $this->belongsToMany('App\models\Product');
     }
