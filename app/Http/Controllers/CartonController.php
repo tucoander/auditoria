@@ -30,4 +30,13 @@ class CartonController extends Controller
             return redirect('/cartons')->with('msg', 'Caixa já possui cadastro  , favor revisar')->with('status', 1);
         }
     }
+
+    public function show()
+    {
+        $carton = new CartonModel();
+
+        $available_cartons = $carton::all();
+
+        return view('cartons/show', ['cartons' => $available_cartons]);
+    }
 }
