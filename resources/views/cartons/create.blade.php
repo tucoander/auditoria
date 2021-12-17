@@ -12,7 +12,7 @@
             @csrf
             <div class="form-group">
                 <label for="shipping_hu"></label>
-                <input type="text" class="form-control" id="shipping_hu" name="shipping_hu" placeholder="Identificação do volumme">
+                <input type="text" class="form-control" id="shipping_hu" name="shipping_hu" placeholder="Identificação do volume">
             </div>
 
             <div class="form-group">
