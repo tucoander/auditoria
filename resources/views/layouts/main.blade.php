@@ -27,7 +27,7 @@
 
                 <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
                     <li><a href="#" class="nav-link px-2 text-secondary">Home</a></li>
-                    <li><a href="/audit/create" class="nav-link px-2 text-white">Auditoria</a></li>
+                    <li><a href="/audit" class="nav-link px-2 text-white">Auditoria</a></li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Produtos
