@@ -41,6 +41,10 @@ Route::post('/cartons', [CartonController::class, 'store'])
     ->middleware(['auth'])
     ->name('cartons_store');
 
+Route::get('/cartons/show', [CartonController::class, 'show'])
+    ->middleware(['auth'])
+    ->name('cartons_show');
+
 
 //Dashboard padrao
 Route::get('/dashboard', function () {
