@@ -45,11 +45,14 @@ Route::get('/cartons/show', [CartonController::class, 'show'])
     ->middleware(['auth'])
     ->name('cartons_show');
 
-//Auditoria 
-Route::get('/audit', [CartonController::class, 'index_carton'])
+//Auditoria
+Route::get('/audit', [CartonController::class, 'index_audit'])
     ->middleware(['auth'])
     ->name('audit');
 
+Route::post('/audit', [CartonController::class, 'store_excel'])
+    ->middleware(['auth'])
+    ->name('cartons_store');
 
 //Dashboard padrao
 Route::get('/dashboard', function () {

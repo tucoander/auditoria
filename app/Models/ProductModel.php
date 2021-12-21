@@ -11,9 +11,12 @@ class ProductModel extends Model
     use HasFactory;
 
     protected $table = 'products';
+    protected $primaryKey = 'id';
+    public $incrementing = false;
     protected $keyType = 'string';
+    protected $fillable = ['id','partnumber', 'description'];
 
-    public function cartons(){
-        return $this->belongsToMany('App\Models\Carton');
+    public function cartonsWithItem(){
+        return $this->belongsToMany(CartonModel::class, 'carton_item', 'carton_id', 'product_id');
     }
 }
