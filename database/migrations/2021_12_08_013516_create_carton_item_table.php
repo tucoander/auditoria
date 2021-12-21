@@ -14,8 +14,8 @@ class CreateCartonItemTable extends Migration
     public function up()
     {
         Schema::create('carton_item', function (Blueprint $table) {
-            $table->foreignId('carton_id')->constrained()->references('id')->on('carton');
-            $table->foreignId('product_id')->constrained()->references('id')->on('product');
+            $table->uuid('carton_id');
+            $table->uuid('product_id');
             $table->integer('packed_quantity');
             $table->integer('audit_quantity');
             $table->integer('remaining_quantity');
