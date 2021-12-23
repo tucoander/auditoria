@@ -54,9 +54,9 @@ Route::post('/audit', [CartonController::class, 'upload'])
   ->middleware(['auth'])
   ->name('cartons_store');
 
-Route::post('/get', [CartonController::class, 'listCartons'])
+Route::get('/audit/list', [CartonController::class, 'listCartons'])
   ->middleware(['auth'])
-  ->name('cartons_store');
+  ->name('list_cartons');
 
 //Dashboard padrao
 Route::get('/dashboard', function () {
