@@ -38,6 +38,10 @@ class CartonController extends Controller
         }
     }
 
+    public function index_carton(){
+        return view('audit/create', ['msg'=> 'Carton or Box']);
+    }
+
     public function show()
     {
         $carton = new CartonModel();

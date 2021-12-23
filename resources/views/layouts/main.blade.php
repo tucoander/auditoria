@@ -24,12 +24,20 @@
                 <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
                     <img src="https://www.imagenspng.com.br/wp-content/uploads/2020/10/among-us-icon-png-02.png" alt="icon" class="bi me-2" width="40" height="40" role="img" aria-label="Bootstrap">
                 </a>
-
                 <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
-                    <li><a href="#" class="nav-link px-2 text-secondary">Home</a></li>
-                    <li><a href="/audit" class="nav-link px-2 text-white">Auditoria</a></li>
+                    <li><a href="/" class="nav-link px-2 text-white">Home</a></li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle text-white" href="/audit" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        Auditoria
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="/audit">Upload</a></li>
+                            <li><a class="dropdown-item" href="#">Consultar Auditoria</a></li>
+                            <li><a class="dropdown-item" href="#">Realizar Auditoria</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle text-danger" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         Produtos
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -38,7 +46,7 @@
                         </ul>
                     </li>
                     <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle text-white" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                        <a class="nav-link dropdown-toggle text-danger" href="#" id="navbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                             Cartons
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
@@ -46,20 +54,29 @@
                             <li><a class="dropdown-item" href="/cartons/show">Consultar Caixas</a></li>
                         </ul>
                     </li>
-                    <li><a href="#" class="nav-link px-2 text-white">About</a></li>
+                    <li><a href="#" class="nav-link px-2 text-danger">About</a></li>
                 </ul>
                 @if (Route::has('login') && Auth::check())
 
                 <div class="dropdown" >
-                    <button class="btn btn-warning dropdown-toggle" type="button" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">
-                        {{ Auth::user()->name }}
+                    
+                    <button 
+                        style="display:flex; align-items: center; justify-content: space-between; flex-direction: row;" 
+                        class="btn btn-light dropdown-toggle" 
+                        type="button" 
+                        id="logout-button" 
+                        data-bs-toggle="dropdown" 
+                        aria-expanded="false">
+                        <i data-feather="user" style="height: 24px; width: 24px; padding: -5px"></i>
                     </button>
                     <ul class="dropdown-menu" aria-labelledby="dropdownMenuButton1">
                         <form method="POST" action="{{ route('logout') }}">
                             @csrf
                             <li>
+                             <p class="dropdown-item">{{ Auth::user()->name}}</p>
+                            </li>
+                            <li>
                              <input class="dropdown-item" type="submit" value="Logout">
-
                             </li>
                         </form>
                     </ul>
@@ -68,7 +85,7 @@
                 @elseif (Route::has('login') && !Auth::check())
                 <div class="text-end">
                     <a href="{{ url('/login') }}"><button type="button" class="btn btn-outline-light me-2">Login</button></a>
-                    <a href="{{ url('/register') }}"><button type="button" class="btn btn-warning">Sign-up</button></a>
+                    <a href="{{ url('/register') }}"><button type="button" class="btn btn-info">Sign-up</button></a>
                 </div>
                 @endif
 
@@ -79,27 +96,11 @@
     <div class="container">
         @yield('content')
     </div>
-
-
-
+    
     <footer class="fixed-bottom">
         <div class="container">
             <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
-                <p class="col-md-4 mb-0 text-muted">© 2021 Company, Inc</p>
-
-                <a href="/" class="col-md-4 d-flex align-items-center justify-content-center mb-3 mb-md-0 me-md-auto link-dark text-decoration-none">
-                    <svg class="bi me-2" width="40" height="32">
-                        <use xlink:href="#bootstrap"></use>
-                    </svg>
-                </a>
-
-                <ul class="nav col-md-4 justify-content-end">
-                    <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Home</a></li>
-                    <li class="nav-item"><a href="/audit/create" class="nav-link px-2 text-muted">Auditoria</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">Pricing</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">FAQs</a></li>
-                    <li class="nav-item"><a href="#" class="nav-link px-2 text-muted">About</a></li>
-                </ul>
+                <p class="col-md-4 mb-0 text-muted">© 2021 Bosch</p>
             </footer>
         </div>
     </footer>

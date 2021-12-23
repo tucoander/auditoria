@@ -15,48 +15,50 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', function () {
-    return view('welcome');
-});
+Route::get('/', [CartonController::class, 'index_audit'])
+  ->middleware(['auth'])
+  ->name('audit');
 
 //Products
 Route::get('/products', [ProductController::class, 'index'])
-    ->middleware(['auth'])
-    ->name('products');
+  ->middleware(['auth'])
+  ->name('products');
 
 Route::post('/products', [ProductController::class, 'store'])
-    ->middleware(['auth'])
-    ->name('products_store');
+  ->middleware(['auth'])
+  ->name('products_store');
 
 Route::get('/products/show', [ProductController::class, 'show'])
-    ->middleware(['auth'])
-    ->name('products_show');
+  ->middleware(['auth'])
+  ->name('products_show');
 
-//Cartons 
+//Cartons
 Route::get('/cartons', [CartonController::class, 'index'])
-    ->middleware(['auth'])
-    ->name('cartons');
+  ->middleware(['auth'])
+  ->name('cartons');
 
 Route::post('/cartons', [CartonController::class, 'store'])
-    ->middleware(['auth'])
-    ->name('cartons_store');
+  ->middleware(['auth'])
+  ->name('cartons_store');
 
 Route::get('/cartons/show', [CartonController::class, 'show'])
-    ->middleware(['auth'])
-    ->name('cartons_show');
+  ->middleware(['auth'])
+  ->name('cartons_show');
 
 //Auditoria
 Route::get('/audit', [CartonController::class, 'index_audit'])
-    ->middleware(['auth'])
-    ->name('audit');
+  ->middleware(['auth'])
+  ->name('audit');
 
 Route::post('/audit', [CartonController::class, 'store_excel'])
-    ->middleware(['auth'])
-    ->name('cartons_store');
+  ->middleware(['auth'])
+  ->name('cartons_store');
 
 //Dashboard padrao
 Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth'])->name('dashboard');
+  return view('dashboard');
+})
+  ->middleware(['auth'])
+  ->name('dashboard');
 
 require __DIR__ . '/auth.php';
