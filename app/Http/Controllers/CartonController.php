@@ -66,7 +66,17 @@ class CartonController extends Controller
     public function listCartons()
     {
         $cartons = CartonModel::all();
-        
+
         return view('audit/list', ['msg' => 'Auditoria Upload', 'cartons' => $cartons]);
+    }
+
+    public function showCarton($id){
+        $carton = CartonModel::where('id', $id)->get();
+        
+        return view('audit/carton', ['msg' => 'Auditoria Upload', 'carton' => $carton[0]]);
+    }
+
+    public function teste(Request $request){
+        var_dump($request);
     }
 }
