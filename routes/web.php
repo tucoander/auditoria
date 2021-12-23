@@ -58,6 +58,14 @@ Route::get('/audit/list', [CartonController::class, 'listCartons'])
   ->middleware(['auth'])
   ->name('list_cartons');
 
+Route::get('/audit/show/{id}', [CartonController::class, 'showCarton'])
+  ->middleware(['auth'])
+  ->name('show_carton');
+
+Route::post('/audit/teste', [CartonController::class, 'teste'])
+  ->middleware(['auth'])
+  ->name('teste');
+
 //Dashboard padrao
 Route::get('/dashboard', function () {
   return view('dashboard');
