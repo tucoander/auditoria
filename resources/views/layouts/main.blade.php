@@ -32,7 +32,7 @@
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" href="/audit">Upload</a></li>
-                            <li><a class="dropdown-item" href="#">Consultar Auditoria</a></li>
+                            <li><a class="dropdown-item" href="/audit/list">Consultar Auditoria</a></li>
                             <li><a class="dropdown-item" href="#">Realizar Auditoria</a></li>
                         </ul>
                     </li>
