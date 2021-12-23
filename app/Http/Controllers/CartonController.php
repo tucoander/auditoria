@@ -53,14 +53,7 @@ class CartonController extends Controller
 
     public function uploadForm()
     {
-        $products = ProductModel::all();
-        return view(
-            'audit/create',
-            [
-                'msg' => 'Auditoria Upload',
-                'products' => $products
-            ]
-        );
+        return view('audit/create', ['msg' => 'Auditoria Upload']);
     }
 
     public function upload(Request $request){
@@ -68,5 +61,12 @@ class CartonController extends Controller
         Excel::import(new ProductImport(), $request->file('importedFile'));
         Excel::import(new CartonItemImport(), $request->file('importedFile'));
         return redirect('/audit')->with('msg', 'Caixa cadastrada')->with('status', 1);
+    }
+
+    public function listCartons()
+    {
+        $cartons = CartonModel::all();
+        
+        return view('audit/list', ['msg' => 'Auditoria Upload', 'cartons' => $cartons]);
     }
 }
