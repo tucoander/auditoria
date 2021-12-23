@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title')</title>
     <!-- CSS da aplicação -->
@@ -22,7 +23,7 @@
         <div class="container">
             <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
                 <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
-                    <img src="https://www.imagenspng.com.br/wp-content/uploads/2020/10/among-us-icon-png-02.png" alt="icon" class="bi me-2" width="40" height="40" role="img" aria-label="Bootstrap">
+                    <img src="/img/icon.png" alt="icon" class="bi me-2" width="40" height="40" role="img" aria-label="Bootstrap">
                 </a>
                 <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
                     <li><a href="/" class="nav-link px-2 text-white">Home</a></li>
