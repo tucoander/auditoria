@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [CartonController::class, 'index_audit'])
+Route::get('/', [CartonController::class, 'uploadForm'])
   ->middleware(['auth'])
   ->name('audit');
 
@@ -46,11 +46,15 @@ Route::get('/cartons/show', [CartonController::class, 'show'])
   ->name('cartons_show');
 
 //Auditoria
-Route::get('/audit', [CartonController::class, 'index_audit'])
+Route::get('/audit', [CartonController::class, 'uploadForm'])
   ->middleware(['auth'])
   ->name('audit');
 
-Route::post('/audit', [CartonController::class, 'store_excel'])
+Route::post('/audit', [CartonController::class, 'upload'])
+  ->middleware(['auth'])
+  ->name('cartons_store');
+
+Route::post('/get', [CartonController::class, 'listCartons'])
   ->middleware(['auth'])
   ->name('cartons_store');
 
