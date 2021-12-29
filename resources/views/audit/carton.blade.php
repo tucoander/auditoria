@@ -163,7 +163,7 @@
         var myModalEl = document.querySelector('#itemAudit');
         var modal = bootstrap.Modal.getOrCreateInstance(myModalEl);
         var getInput = document.getElementById('audit_quantity').valueAsNumber;
-        if(!!getInput){
+        if(!!getInput || getInput === 0){
             console.log(getInput+' não é nulo');
             if(getInput >= 0){
                 salvaItem();
