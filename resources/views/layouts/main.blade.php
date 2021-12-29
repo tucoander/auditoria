@@ -19,7 +19,7 @@
 </head>
 
 <body>
-    <header class="p-3 bg-dark text-white">
+    <header class="p-3 bg-dark text-white" style="padding: 0.5rem !important;">
         <div class="container">
             <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
                 <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
@@ -98,7 +98,7 @@
         @yield('content')
     </div>
     
-    <footer class="fixed-bottom">
+    <footer class="fixed-bottom" style="max-height: 80px; padding: 5px; margin: 5px;">
         <div class="container">
             <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
                 <p class="col-md-4 mb-0 text-muted">© 2021 Bosch</p>
