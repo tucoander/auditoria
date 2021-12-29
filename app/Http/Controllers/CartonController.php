@@ -12,6 +12,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use SpreadsheetReader;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Auth;
 
 class CartonController extends Controller
 {
@@ -109,7 +110,8 @@ class CartonController extends Controller
             'remaining_quantity' => $sobraFalta['falta'],
             'exceed_quantity' => $sobraFalta['sobra'],
             'damaged_quantity' => $audit['damaged_quantity'],
-            'items_status' => true
+            'items_status' => true,
+            'audit_user' => Auth::user()->username
         ]);
         echo 'atualizado';
 
