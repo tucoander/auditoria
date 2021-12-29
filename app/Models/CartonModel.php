@@ -28,7 +28,7 @@ class CartonModel extends Model
                 'damaged_quantity',
                 'items_status'
             ]
-        )
+        )->withTimestamps();
         ;
     }
 
