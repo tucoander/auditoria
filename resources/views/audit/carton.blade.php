@@ -4,11 +4,11 @@
 
 @section('content')
 
-<div >
-<h1>Auditoria de {{ $carton->shipping_hu }}</h1>
-<hr>
 
-   <div class="card mb-3" id="table-div" >
+<h3 class="mt-2">Auditoria de {{ $carton->shipping_hu }}</h3>
+<hr>
+    <!-- começo do card -->
+   <div class="card mb-3" id="table-div">
         <div class="card-header">
             <div class="" >
                 <label for="teste" class="form-label">Item</label>
@@ -16,7 +16,9 @@
                 <div id="textHelp" class="form-text" >Filtre o item a ser auditado.</div>
             </div>
         </div>
-        <div class="card-body" style="border-bottom: 1px solid #aaa;" >
+        <div 
+            class="card-body" 
+            style="border-bottom: 1px solid #aaa; font-size: 13px !important; padding: 5px;">
             
             <div class="row">
                 <div style="font-weight: bold;" class="col-2 align-self-center text-center">Código Material</div>
@@ -26,17 +28,18 @@
                 <div style="font-weight: bold;" class="col align-self-center text-center">Falta</div>
                 <div style="font-weight: bold;" class="col align-self-center text-center">Sobra</div>
                 <div style="font-weight: bold;" class="col align-self-center text-center">Avaria</div>
-                <div style="font-weight: bold;" class="col align-self-center text-center">Status</div>
+                <div style="font-weight: bold;" class="col-2 align-self-center text-center">Status</div>
             </div>
             </div>
-            <div class="card-body" style="max-height: 250px; overflow: auto;">
+            <div class="card-body" style="max-height: 200px; max-width: 100%;overflow: auto; font-size: 12px !important; padding-top: 0;">
     @foreach ( $carton->itemsPacked as $product)
-            <form action="">
-                <div class="row" style="border-bottom: 1px solid #aaa; padding: 10px 10px 10px 10px ;">
-                    <div class="col-2 align-self-center text-center">
+            <form action="" style="paddding: 0;">
+                <div class="row" style="border-bottom: 1px solid #aaa; padding: 5px 0 5px 0;">
+                    <div class="col-2 align-self-center text-center" >
                         <button 
                             type="button" 
                             class="btn btn-outline-dark btn-sm" 
+                            style="font-size: 10px !important;"
                             data-bs-toggle="modal" 
                             data-bs-target="#itemAudit" 
                             data-bs-partnumber="{{ $product->partnumber }}"
@@ -47,6 +50,7 @@
                             data-bs-exceed="{{ $product->pivot->exceed }}"
                             data-bs-damaged_quantity="{{ $product->pivot->damaged_quantity }}"
                             data-bs-items_status="{{ $product->pivot->items_status }}"
+                            data-bs-line="{{ $product->pivot->line }}"
                             data-bs-carton="{{ $carton->id }}">{{ $product->partnumber }}
                         </button>
                     </div>
@@ -64,24 +68,67 @@
                     <div class="col align-self-center text-center">{{ $product->pivot->damaged_quantity }}</div>
                     
                     @if($product->pivot->items_status === '0')
-                    <div class="col align-self-center text-center text-warning">
-                    <i data-feather="alert-circle" ></i>
-                    </div>
+                    <div class="col-2 align-self-center text-center text-warning">
+                        <div class="row">
+                        <div class="col-2">
+                            <i data-feather="alert-circle"  style="font-size: 13px !important;"></i>
+                        </div>
                     @else
-                    <div class="col align-self-center text-center text-success" >
-                    <i data-feather="check-circle"></i>
-                    </div>
+                    <div class="col-2 align-self-center text-center text-success" >
+                        <div class="row">
+                        <div class="col-2">
+                            <i data-feather="check-circle"  style="font-size: 10px !important;"></i>
+                        </div>
+                            
                     @endif
+                        <div class="col-10">
+                            <select
+                                id="status"
+                                class="form-select form-select-sm " 
+                                aria-label=".form-select-sm example"
+                                style="font-size: 10px !important;"
+                                onchange="closeItem('{{ $product->pivot->product_id }}', {{ $product->pivot->line }})"
+                                >
+                    @if($product->pivot->audit_status == 'Completo')
+                                <option >Status</option>
+                                <option value="1" selected>Completo</option>
+                                <option value="2">Corrigido</option>
+                    @elseif($product->pivot->audit_status == 'Corrigido')
+                                <option >Status</option>
+                                <option value="1">Completo</option>
+                                <option value="2" selected>Corrigido</option>
+                    @else
+                                <option selected>Status</option>
+                                <option value="1">Completo</option>
+                                <option value="2">Corrigido</option>
+                    @endif
+                            </select>
+                            <input type="hidden" name="teste" value="{{ $product->pivot->audit_status }}">
+                        </div>
+                            
+                        </div>
+                    </div>
                 </div>
                 </form>
     @endforeach
-            
-            </tbody>
-            </table>
             </div>
-        
+        <!-- fim do card -->
         </div>
+        <div class="row justify-content-between align-items-center">
+            <div class="col-3">
+                <button type="button" class="btn btn-dark" onclick="exceedItem()" style="width: 100%;">Item Excedente</button>
+            </div>
+            <div class="col-3">
+                <button type="button" class="btn btn-dark" onclick="addInformation()" style="width: 100%;">Inserir Observações</button>
+            </div>
+            <div class="col-3">
+                <button type="button" class="btn btn-primary" onclick="closeAuditBox()" style="width: 100%;">Finalizar Auditoria</button>
+            </div>
         </div>
+    </div>
+    
+    
+    
 <div class="modal fade" id="itemAudit" tabindex="-1" aria-labelledby="itemAuditLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-ml">
     <div class="modal-content">
@@ -125,6 +172,7 @@
                 </div>
             </div>
             <input type="hidden" id="carton" name="carton" value="">
+            <input type="hidden" id="line" name="line" value="">
         </form>
       </div>
       <div class="modal-footer">
@@ -136,6 +184,10 @@
 </div>
 
 <script>
+    function exceedItem(){alert("Item lançado")}
+    function addInformation(){alert("Informação inserida")}
+    function closeAuditBox(){alert("Auditoria Finalizada")}
+
     function cartonTableAudit(){
     // Declare variables
     var input, filter, table, tr, td, i, txtValue;
@@ -199,6 +251,34 @@
         xmlHttp.setRequestHeader('X-CSRF-Token', token);
         xmlHttp.send(formData);
     }
+
+    function closeItem(param, line) {
+        var carton = new String('{{ $carton->id }}');
+       
+        var select = document.getElementById('status');
+        var token = document.querySelector("meta[name][content]").attributes[1].value 
+        var formData = new FormData(); 
+        
+        formData.append('carton', carton );
+        formData.append('product',  param);
+        formData.append('status',  select[select.selectedIndex].innerText);
+        formData.append('line',  line);
+        
+        
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.onreadystatechange = function() {
+            if(xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+                var response = JSON.parse(xmlHttp.responseText);
+                console.log(response);
+                if(response.msg === 'nOk'){
+                    alert("Não é possível alterar linha finalizada, consulte o administrador");
+                }
+            }
+        }
+        xmlHttp.open("post", "/audit/item/close"); 
+        xmlHttp.setRequestHeader('X-CSRF-Token', token);
+        xmlHttp.send(formData);
+    }
     
 
     var itemAudit = document.getElementById('itemAudit')
@@ -217,6 +297,7 @@
         exceed: button.getAttribute('data-bs-exceed'),
         damaged: button.getAttribute('data-bs-damaged_quantity'),
         status: button.getAttribute('data-bs-items_status'),
+        line: button.getAttribute('data-bs-line'),
         carton: button.getAttribute('data-bs-carton'),
     }
 
@@ -229,12 +310,14 @@
     var description = itemAudit.querySelector('#description')
     var packed = itemAudit.querySelector('#packed_quantity')
     var carton = itemAudit.querySelector('#carton')
+    var line = itemAudit.querySelector('#line')
 
     modalTitle.textContent = 'Auditoria'
     partnumber.value = data.partnumber
     description.value = data.description
     packed.value = data.packed
     carton.value = data.carton
+    line.value = data.line
     })
 </script>
 
