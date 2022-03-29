@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="csrf-token" content="{{ csrf_token() }}" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>@yield('title')</title>
     <!-- CSS da aplicação -->
@@ -18,11 +19,11 @@
 </head>
 
 <body>
-    <header class="p-3 bg-dark text-white">
+    <header class="p-3 bg-dark text-white" style="padding: 0.5rem !important;">
         <div class="container">
             <div class="d-flex flex-wrap align-items-center justify-content-center justify-content-lg-start">
                 <a href="/" class="d-flex align-items-center mb-2 mb-lg-0 text-white text-decoration-none">
-                    <img src="https://www.imagenspng.com.br/wp-content/uploads/2020/10/among-us-icon-png-02.png" alt="icon" class="bi me-2" width="40" height="40" role="img" aria-label="Bootstrap">
+                    <img src="/img/icon.png" alt="icon" class="bi me-2" width="40" height="40" role="img" aria-label="Bootstrap">
                 </a>
                 <ul class="nav col-12 col-lg-auto me-lg-auto mb-2 justify-content-center mb-md-0">
                     <li><a href="/" class="nav-link px-2 text-white">Home</a></li>
@@ -32,7 +33,7 @@
                         </a>
                         <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
                             <li><a class="dropdown-item" href="/audit">Upload</a></li>
-                            <li><a class="dropdown-item" href="#">Consultar Auditoria</a></li>
+                            <li><a class="dropdown-item" href="/audit/list">Consultar Auditoria</a></li>
                             <li><a class="dropdown-item" href="#">Realizar Auditoria</a></li>
                         </ul>
                     </li>
@@ -97,9 +98,10 @@
         @yield('content')
     </div>
     
-    <footer class="fixed-bottom">
+    <footer class="fixed-bottom" 
+    style="max-height: 50px">
         <div class="container">
-            <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+            <footer class="d-flex flex-wrap justify-content-between align-items-center border-top">
                 <p class="col-md-4 mb-0 text-muted">© 2021 Bosch</p>
             </footer>
         </div>

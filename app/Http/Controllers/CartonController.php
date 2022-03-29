@@ -6,11 +6,13 @@ use App\Imports\CartonItemImport;
 use App\Imports\CartonImport;
 use App\Imports\ProductImport;
 use App\Models\CartonModel;
+use App\Models\CartonItemModel;
 use App\Models\ProductModel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 use SpreadsheetReader;
 use Maatwebsite\Excel\Facades\Excel;
+use Illuminate\Support\Facades\Auth;
 
 class CartonController extends Controller
 {
@@ -51,190 +53,110 @@ class CartonController extends Controller
         return view('cartons/show', ['cartons' => $available_cartons]);
     }
 
-    public function index_audit()
+    public function uploadForm()
     {
-        $products = ProductModel::all();
-        return view(
-            'audit/create',
-            [
-                'msg' => 'Auditoria Upload',
-                'products' => $products
-            ]
-        );
+        return view('audit/create', ['msg' => 'Auditoria Upload']);
     }
 
-    public function store_audit(Request $request)
-    {
-        $inputFileName = $request->importedFile;
-
-        $inputFileType = \PhpOffice\PhpSpreadsheet\IOFactory::identify($inputFileName);
-
-        switch ($inputFileType) {
-            case 'Xlsx':
-                $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xlsx();
-                break;
-            case 'Xls':
-                $reader = new \PhpOffice\PhpSpreadsheet\Reader\Xls();
-                break;
-            case 'Csv':
-                $reader = new \PhpOffice\PhpSpreadsheet\Reader\Csv();
-                break;
-        }
-
-        $spreadsheet = $reader->load($inputFileName);
-        $worksheet = $spreadsheet->getActiveSheet();
-        $rows = $worksheet->toArray();
-        $indexArray = array(
-            0 => 'Unidade comercial',
-            2 => 'Produto',
-            3 => 'Descrição',
-            4 => 'Quantidade',
-            6 => 'Tipo de Estoque',
-            9 => 'Documento',
-            13 => 'Centro',
-            14 => 'Posição no depósito'
-        );
-
-        $cartonsArray = array();
-        $cartonData = array(0);
-        $productsArray = array();
-        $productData = array(2);
-
-        foreach ($rows as $key => $excelRow) {
-            if ($key > 1) {
-                foreach ($excelRow as $col => $cell) {
-                    if (in_array($col, $cartonData) and !empty($cell)) {
-                        if (!in_array($cell, $cartonsArray)) {
-                            $cartonsArray[] = $cell;
-                        }
-                    }
-                    if (in_array($col, $productData) and !empty($cell)) {
-                        if (!in_array($cell, $productsArray)) {
-                            $productsArray[] = $cell;
-                        }
-                    }
-                }
-            }
-        }
-
-        $shipping_hu = new CartonModel();
-        $material = new ProductModel();
-
-        foreach ($cartonsArray as $k => $carton) {
-
-            $cartonAlreadyExists = $shipping_hu::where('shipping_hu', $carton)->count();
-            if ($cartonAlreadyExists < 1) {
-                foreach ($rows as $key => $excelRow) {
-                    if ($key > 1) {
-                        if ($excelRow[0] === $carton) {
-                            $shipping_hu->id = Str::uuid();
-                            $shipping_hu->shipping_hu = $excelRow[0];
-                            $shipping_hu->document = $excelRow[9];
-                            $shipping_hu->save();
-                        }
-                    }
-                }
-            }
-        }
-
-        foreach ($productsArray as $k => $product) {
-            
-            $productAlreadyExists = $material::where('partnumber', $product)->count();
-            if ($productAlreadyExists < 1) {
-                foreach ($rows as $key => $excelRow) {
-                    if ($key > 1) {
-                        if ($excelRow[2] === $product) {
-                            $material->id = Str::uuid();
-                            $material->partnumber = $excelRow[2];
-                            $material->description = $excelRow[3];
-                            $material->save();
-                        }
-                    }
-                }
-            }
-        }
-
-        // $cartonInput = $carton::where('shipping_hu', $request->shipping_hu)->get();
-
-        // $products_inputs = collect($request->input('packed_quantity', []))->map(
-        //     function($product){
-        //         return [
-        //             'packed_quantity' => $product,
-        //             'audit_quantity' => 0,
-        //             'remaining_quantity' => 0,
-        //             'exceed_quantity' => 0,
-        //             'damaged_quantity' => 0,
-        //             'items_status' => false
-        //         ];
-        //     }
-        // );
-        $log =array();
-        foreach ($cartonsArray as $k => $carton) {
-            $i = 0;
-            foreach ($rows as $key => $excelRow) {
-                if ($key > 1) {
-                    
-                    if ($excelRow[0] === $carton) {
-                        $i++;
-                        // print_r($excelRow[0]);
-                        // echo ' - - - '.$i.' - - - ';
-                        // print_r($carton);
-                        // echo '<br><br>';
-                        $productsPacked = [
-                            'packed_quantity' => $excelRow[4],
-                            'audit_quantity' => 0,
-                            'remaining_quantity' => 0,
-                            'exceed_quantity' => 0,
-                            'damaged_quantity' => 0,
-                            'items_status' => false
-                        ];
-                        $temp = array();
-
-                        $product = $material::where('partnumber', $excelRow[2])->get();
-
-                        $temp[$product[0]->id][$i] = $productsPacked;
-
-                        $products_inputs[$product[0]->id][] = $productsPacked;
-
-                        $carton = $shipping_hu::where('shipping_hu', $excelRow[0])->get();
-
-                        $log[$carton[0]->shipping_hu][$i] = $temp;
-
-                        $temp = array();
-
-                        $carton = $shipping_hu::findOrFail($carton[0]->id);
-
-                        // $carton->itemsPacked()->attach($products_inputs);
-                        // $carton->save();
-
-                        
-
-                    }
-                    
-                }
-            }
-            $products_inputs = array();
-        }
-
-        dd($log);
-        
-
-
-
-
-
-        // $carton = $carton::findOrFail($cartonInput[0]->id);
-        // // $products_inputs = $request->input('products', []);
-        // // dd($request->all(), $products_inputs, $cartonInput[0]->id);
-        // $carton->itemsPacked()->attach($products_inputs);
-
-        // return redirect('/cartons')->with('msg', 'Caixa cadastrada');
-    }
-
-    public function store_excel(Request $request){
+    public function upload(Request $request){
         Excel::import(new CartonImport(), $request->file('importedFile'));
         Excel::import(new ProductImport(), $request->file('importedFile'));
         Excel::import(new CartonItemImport(), $request->file('importedFile'));
         return redirect('/audit')->with('msg', 'Caixa cadastrada')->with('status', 1);
+    }
+
+    public function listCartons()
+    {
+        $cartons = CartonModel::all();
+
+        return view('audit/list', ['msg' => 'Auditoria Upload', 'cartons' => $cartons]);
+    }
+
+    public function showCarton($id){
+        $carton = CartonModel::where('id', $id)->get();
+        
+        return view('audit/carton', ['msg' => 'Auditoria Upload', 'carton' => $carton[0]]);
+    }
+
+    public function auditItem(Request $request){
+        // return redirect('/audit/show/'.$request['carton'])->with('msg', 'Item atualizado');
+        $carton = new CartonModel();
+        $product = new ProductModel();
+        $audit = new CartonItemModel();
+
+        $carton = $carton::where('id', $request['carton'])->first();
+        
+        $productColletcion = $product::where('partnumber', $request['partnumber'])->first();
+
+        $where = [
+            'carton_id' => $carton['id'], 
+            'product_id' => $productColletcion['id'],
+            'line' => $request['line']
+        ];
+
+        $audit = $audit::where($where)->first();
+
+        $sobraFalta = array();
+
+        if($audit['packed_quantity'] >= $request['audit_quantity']){
+            $sobraFalta['falta'] = $audit['packed_quantity'] - $request['audit_quantity'];
+            $sobraFalta['sobra'] = 0;
+        }else{
+            $sobraFalta['falta'] = 0;
+            $sobraFalta['sobra'] = $request['audit_quantity'] -$audit['packed_quantity'];
+        }
+
+        // using attach() for single message
+        $audit = $audit::where($where)
+            ->update(array(
+                'audit_quantity' => $request['audit_quantity'],
+                'items_status' => true,
+                'audit_user' => Auth::user()->username,
+                'remaining_quantity' => $sobraFalta['falta'],
+                'exceed_quantity' => $sobraFalta['sobra'],
+            )
+        );
+        // $carton->itemsPacked()->attach($productColletcion['id'], [
+        //     'packed_quantity' => $audit['packed_quantity'],
+        //     'audit_quantity' => $request['audit_quantity'],
+        //     'remaining_quantity' => $sobraFalta['falta'],
+        //     'exceed_quantity' => $sobraFalta['sobra'],
+        //     'damaged_quantity' => $audit['damaged_quantity'],
+        //     'items_status' => true,
+        //     'audit_user' => Auth::user()->username
+        // ]);
+        echo json_encode(array('msg'=> 'Ok'));
+    }
+
+    function closeAuditItem(Request $request){
+        $audit = new CartonItemModel();
+
+        $where = [
+            'carton_id' => $request['carton'], 
+            'product_id' => $request['product'],
+            'line' => $request['line']
+        ];
+
+        $audit = $audit::where($where)->first();
+        
+        if($audit['audit_status'] != 'Completo' && $audit['audit_status'] != 'Corrigido' ){
+            $audit = $audit::where($where)->update(array('audit_status'=> $request['status']));
+            echo json_encode(array('msg'=> 'Ok'));
+        }
+        else{
+            echo json_encode(array('msg'=> 'nOk'));
+        }
+
+        // $carton->itemsPacked()->attach($productColletcion['id'], [
+        //     'packed_quantity' => $audit['packed_quantity'],
+        //     'audit_quantity' => $audit['audit_quantity'],
+        //     'remaining_quantity' => $audit['remaining_quantity'],
+        //     'exceed_quantity' => $audit['exceed_quantity'],
+        //     'damaged_quantity' => $audit['damaged_quantity'],
+        //     'items_status' => $audit['items_status'],
+        //     'audit_user' => $audit['audit_user'],
+        //     'audit_status' => $request['status']
+        // ]);
+
     }
 }

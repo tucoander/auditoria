@@ -15,7 +15,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/', [CartonController::class, 'index_audit'])
+Route::get('/', [CartonController::class, 'uploadForm'])
   ->middleware(['auth'])
   ->name('audit');
 
@@ -46,13 +46,29 @@ Route::get('/cartons/show', [CartonController::class, 'show'])
   ->name('cartons_show');
 
 //Auditoria
-Route::get('/audit', [CartonController::class, 'index_audit'])
+Route::get('/audit', [CartonController::class, 'uploadForm'])
   ->middleware(['auth'])
   ->name('audit');
 
-Route::post('/audit', [CartonController::class, 'store_excel'])
+Route::post('/audit', [CartonController::class, 'upload'])
   ->middleware(['auth'])
   ->name('cartons_store');
+
+Route::get('/audit/list', [CartonController::class, 'listCartons'])
+  ->middleware(['auth'])
+  ->name('list_cartons');
+
+Route::get('/audit/show/{id}', [CartonController::class, 'showCarton'])
+  ->middleware(['auth'])
+  ->name('show_carton');
+
+Route::post('/audit/item', [CartonController::class, 'auditItem'])
+  ->middleware(['auth'])
+  ->name('audit_item');
+
+  Route::post('/audit/item/close', [CartonController::class, 'closeAuditItem'])
+  ->middleware(['auth'])
+  ->name('close_audit_item');
 
 //Dashboard padrao
 Route::get('/dashboard', function () {
