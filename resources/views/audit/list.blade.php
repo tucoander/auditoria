@@ -18,35 +18,43 @@
     <button type="submit" class="btn btn-primary">Procurar</button>
 </form>
 <hr>
+<div class="row m-1">
 @foreach ($cartons as $carton)
     <!--<h3>{{ $carton->shipping_hu }}</h3>
       -->
-    <div class="card text-dark mb-3">
-       
-        <div class="card-header"> <a class="btn btn-info" href="/audit/show/{{ $carton->id }}">{{ $carton->shipping_hu }}</a></div>
-        <div class="card-body">
-            <table class="table">
-            <thead>
-                <tr>
-                <th scope="col">Código Material</th>
-                <th scope="col">Descrição</th>
-                <th scope="col">Quantidade Embalada</th>
-                <th scope="col">Documento</th>
-                </tr>
-            </thead>
-            <tbody>
-    @foreach ( $carton->itemsPacked as $product)
-            <tr>
-                <th scope="row">{{ $product->partnumber }}</th>
-                <td>{{ $product->description }}</td>
-                <td>{{ $product->pivot->packed_quantity }}</td>
-                <td>{{ $carton->document }}</td>
-            </tr>
-    @endforeach
-    </tbody>
-    </table>
-    </div>
-</div>
-@endforeach
+      <div class="col-md-6 p-1">
+        <div class="card">
+            <div class="card-header">
+                {{ $carton->shipping_hu }}
+            </div>
+            <div class="card-body">
+                
+                <table class="table">
+                    <thead>
+                        <tr>
+                        <th scope="col">Código Material</th>
+                        <th scope="col">Descrição</th>
+                        <th scope="col">Documento</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                    @foreach ( $carton->itemsPacked as $product)
+                        <tr>
+                            <th scope="row">{{ $product->partnumber }}</th>
+                            <td>{{ $product->description }}</td>
+                            <td>{{ $carton->document }}</td>
+                        </tr>
+                    @endforeach
+                    </tbody>
+                </table>
+                <div class="row justify-content-end p-1">
+                    <a href="/audit/show/{{ $carton->id }}" class="btn btn-dark w-25">Auditar</a>
+                </div>
+                
+            </div>
+        </div>
+      </div>
 
+@endforeach
+</div>
 @endsection
