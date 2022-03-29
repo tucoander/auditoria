@@ -98,9 +98,10 @@
         @yield('content')
     </div>
     
-    <footer class="fixed-bottom" style="max-height: 80px; padding: 5px; margin: 5px;">
+    <footer class="fixed-bottom" 
+    style="max-height: 50px">
         <div class="container">
-            <footer class="d-flex flex-wrap justify-content-between align-items-center py-3 my-4 border-top">
+            <footer class="d-flex flex-wrap justify-content-between align-items-center border-top">
                 <p class="col-md-4 mb-0 text-muted">© 2021 Bosch</p>
             </footer>
         </div>
