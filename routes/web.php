@@ -66,6 +66,10 @@ Route::post('/audit/item', [CartonController::class, 'auditItem'])
   ->middleware(['auth'])
   ->name('audit_item');
 
+  Route::post('/audit/item/close', [CartonController::class, 'closeAuditItem'])
+  ->middleware(['auth'])
+  ->name('close_audit_item');
+
 //Dashboard padrao
 Route::get('/dashboard', function () {
   return view('dashboard');
