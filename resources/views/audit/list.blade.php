@@ -22,7 +22,8 @@
     <!--<h3>{{ $carton->shipping_hu }}</h3>
       -->
     <div class="card text-dark mb-3">
-        <a href="/audit/show/{{ $carton->id }}"><div class="card-header">{{ $carton->shipping_hu }}</div></a>
+       
+        <div class="card-header"> <a class="btn btn-info" href="/audit/show/{{ $carton->id }}">{{ $carton->shipping_hu }}</a></div>
         <div class="card-body">
             <table class="table">
             <thead>
