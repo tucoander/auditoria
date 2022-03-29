@@ -26,7 +26,9 @@ class CartonModel extends Model
                 'remaining_quantity',
                 'exceed_quantity',
                 'damaged_quantity',
-                'items_status'
+                'items_status',
+                'line',
+                'audit_status'
             ]
         )->withTimestamps();
         ;

@@ -87,9 +87,12 @@ class CartonController extends Controller
         $carton = $carton::where('id', $request['carton'])->first();
         
         $productColletcion = $product::where('partnumber', $request['partnumber'])->first();
-       
 
-        $where = ['carton_id' => $carton['id'], 'product_id' => $productColletcion['id']];
+        $where = [
+            'carton_id' => $carton['id'], 
+            'product_id' => $productColletcion['id'],
+            'line' => $request['line']
+        ];
 
         $audit = $audit::where($where)->first();
 
@@ -104,16 +107,56 @@ class CartonController extends Controller
         }
 
         // using attach() for single message
-        $carton->itemsPacked()->attach($productColletcion['id'], [
-            'packed_quantity' => $audit['packed_quantity'],
-            'audit_quantity' => $request['audit_quantity'],
-            'remaining_quantity' => $sobraFalta['falta'],
-            'exceed_quantity' => $sobraFalta['sobra'],
-            'damaged_quantity' => $audit['damaged_quantity'],
-            'items_status' => true,
-            'audit_user' => Auth::user()->username
-        ]);
-        echo 'atualizado';
+        $audit = $audit::where($where)
+            ->update(array(
+                'audit_quantity' => $request['audit_quantity'],
+                'items_status' => true,
+                'audit_user' => Auth::user()->username,
+                'remaining_quantity' => $sobraFalta['falta'],
+                'exceed_quantity' => $sobraFalta['sobra'],
+            )
+        );
+        // $carton->itemsPacked()->attach($productColletcion['id'], [
+        //     'packed_quantity' => $audit['packed_quantity'],
+        //     'audit_quantity' => $request['audit_quantity'],
+        //     'remaining_quantity' => $sobraFalta['falta'],
+        //     'exceed_quantity' => $sobraFalta['sobra'],
+        //     'damaged_quantity' => $audit['damaged_quantity'],
+        //     'items_status' => true,
+        //     'audit_user' => Auth::user()->username
+        // ]);
+        echo json_encode(array('msg'=> 'Ok'));
+    }
+
+    function closeAuditItem(Request $request){
+        $audit = new CartonItemModel();
+
+        $where = [
+            'carton_id' => $request['carton'], 
+            'product_id' => $request['product'],
+            'line' => $request['line']
+        ];
+
+        $audit = $audit::where($where)->first();
+        
+        if($audit['audit_status'] != 'Completo' && $audit['audit_status'] != 'Corrigido' ){
+            $audit = $audit::where($where)->update(array('audit_status'=> $request['status']));
+            echo json_encode(array('msg'=> 'Ok'));
+        }
+        else{
+            echo json_encode(array('msg'=> 'nOk'));
+        }
+
+        // $carton->itemsPacked()->attach($productColletcion['id'], [
+        //     'packed_quantity' => $audit['packed_quantity'],
+        //     'audit_quantity' => $audit['audit_quantity'],
+        //     'remaining_quantity' => $audit['remaining_quantity'],
+        //     'exceed_quantity' => $audit['exceed_quantity'],
+        //     'damaged_quantity' => $audit['damaged_quantity'],
+        //     'items_status' => $audit['items_status'],
+        //     'audit_user' => $audit['audit_user'],
+        //     'audit_status' => $request['status']
+        // ]);
 
     }
 }

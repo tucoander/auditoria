@@ -36,7 +36,6 @@ class CartonItemImport implements ToModel, WithHeadingRow
         } else {
             $carton = $this->cartons = CartonModel::where('shipping_hu', $row['unidade_comercial'])->first();
             $product = $this->product = ProductModel::where('partnumber', $row['produto'])->first();
-
            
             return new CartonItemModel([
                 'carton_id' => $carton->id,
@@ -46,7 +45,8 @@ class CartonItemImport implements ToModel, WithHeadingRow
                 'remaining_quantity' => 0,
                 'exceed_quantity' => 0,
                 'damaged_quantity' => 0,
-                'items_status' => false
+                'items_status' => false,
+                'line' => $row['no_do_item']
             ]);
             
                 
