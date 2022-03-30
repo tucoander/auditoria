@@ -59,12 +59,10 @@
                     <div class="col align-self-center text-center">{{ $product->pivot->audit_quantity }}</div>
                     <div class="col align-self-center text-center">
                     {{ 
-                    $product->pivot->packed_quantity - $product->pivot->audit_quantity > 0 && $product->pivot->audit_quantity > 0
-                    ? $product->pivot->packed_quantity - $product->pivot->audit_quantity : 0 }}
+                    $product->pivot->remaining_quantity }}
                     </div>
                     <div class="col align-self-center text-center">{{ 
-                    $product->pivot->audit_quantity - $product->pivot->packed_quantity > 0 && $product->pivot->audit_quantity > 0
-                    ? $product->pivot->audit_quantity - $product->pivot->packed_quantity : 0 }}</div>
+                    $product->pivot->exceed_quantity }}</div>
                     <div class="col align-self-center text-center">{{ $product->pivot->damaged_quantity }}</div>
                     
                     @if($product->pivot->items_status === '0')
@@ -186,7 +184,27 @@
 <script>
     function exceedItem(){alert("Item lançado")}
     function addInformation(){alert("Informação inserida")}
-    function closeAuditBox(){alert("Auditoria Finalizada")}
+    function closeAuditBox(){
+        
+        var carton = new String('{{ $carton->id }}');
+        var token = document.querySelector("meta[name][content]").attributes[1].value 
+        var formData = new FormData(); 
+        
+        formData.append('carton', carton );
+
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.onreadystatechange = function() {
+            if(xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+                var response = JSON.parse(xmlHttp.responseText);
+                console.log(response);
+                
+            }
+        }
+        xmlHttp.open("post", "/audit/carton/close"); 
+        xmlHttp.setRequestHeader('X-CSRF-Token', token);
+        xmlHttp.send(formData);
+
+    }
 
     function cartonTableAudit(){
     // Declare variables
