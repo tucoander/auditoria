@@ -28,6 +28,6 @@ class CreateCartonTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('carton');
+        Schema::dropIfExists('cartons');
     }
 }
