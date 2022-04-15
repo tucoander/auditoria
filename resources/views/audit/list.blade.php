@@ -32,7 +32,7 @@
                     <div>
                         <span class="badge bg-danger" style="right: 0;">Pendente</span>
                     </div>
-                    @elseif ($carton->status == 2)
+                    @elseif($carton->status == 2)
                     <div>
                         <span class="badge bg-warning" style="right: 0;">Em andamento</span>
                     </div>
