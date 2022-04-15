@@ -202,10 +202,7 @@ class CartonController extends Controller
         } elseif ($line->audit_quantity < $line->packed_quantity) {
           $falta = $line->packed_quantity - $line->audit_quantity;
         }
-        echo $line->line;
-        echo '<br>Sobra: ' . $sobra;
-        echo '<br>Falta: ' . $falta;
-        echo '<br><br>';
+        
 
         $where_update = [
           'carton_id' => $request->carton,
@@ -227,5 +224,8 @@ class CartonController extends Controller
     $update_carton = CartonModel::where($where_carton)->update([
         'status' => '1',
       ]);
+      $response = array();
+      $response['msg'] = 'Ok';
+      echo json_encode($response);
   }
 }
