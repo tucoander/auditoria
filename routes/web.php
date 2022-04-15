@@ -62,7 +62,7 @@ Route::get('/audit/show/{id}', [CartonController::class, 'showCarton'])
   ->middleware(['auth'])
   ->name('show_carton');
 
-Route::post('/audit/item', [CartonController::class, 'auditItem'])
+Route::post('/audit/item', [CartonController::class, 'auditItemAddQuantity'])
   ->middleware(['auth'])
   ->name('audit_item');
 
