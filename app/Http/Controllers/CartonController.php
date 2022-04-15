@@ -105,6 +105,11 @@ class CartonController extends Controller
 
     $carton = $carton::where('id', $request['carton'])->first();
 
+    $update_carton = $carton
+    ->update([
+      'status' => '2',
+    ]);
+
     $productColletcion = $product
       ::where('partnumber', $request['partnumber'])
       ->first();
@@ -137,16 +142,54 @@ class CartonController extends Controller
       'remaining_quantity' => $sobraFalta['falta'],
       'exceed_quantity' => $sobraFalta['sobra'],
     ]);
-    // $carton->itemsPacked()->attach($productColletcion['id'], [
-    //     'packed_quantity' => $audit['packed_quantity'],
-    //     'audit_quantity' => $request['audit_quantity'],
-    //     'remaining_quantity' => $sobraFalta['falta'],
-    //     'exceed_quantity' => $sobraFalta['sobra'],
-    //     'damaged_quantity' => $audit['damaged_quantity'],
-    //     'items_status' => true,
-    //     'audit_user' => Auth::user()->username
-    // ]);
+   
     echo json_encode(['msg' => 'Ok']);
+  }
+
+  public function auditItemAddQuantity(Request $request){
+
+    // $carton = CartonModel::where('id', $request['carton'])->first();
+
+    // $update_carton = $carton
+    //   ->update([
+    //   'status' => '2',
+    //   ]);
+
+    $productColletcion = ProductModel
+      ::where('partnumber', $request['partnumber'])
+      ->first();
+    $where = [
+        'carton_id' => $request['carton'],
+        'product_id' => $productColletcion['id'],
+        'line' => $request['line'],
+      ];
+
+    $auditUpdate = CartonItemModel::where($where)->first();
+
+    $auditUpdate = $auditUpdate::where($where)->update([
+      'audit_quantity' => $auditUpdate->audit_quantity + $request['audit_quantity'],
+      'items_status' => true,
+      'audit_user' => Auth::user()->username,
+    ]);
+
+    $auditSobraEFalta = CartonItemModel::where($where)->first();
+
+    $sobraFalta = [];
+
+    if ($auditSobraEFalta['packed_quantity'] >= $auditSobraEFalta['audit_quantity']) {
+      $sobraFalta['falta'] = $auditSobraEFalta['packed_quantity'] - $auditSobraEFalta['audit_quantity'];
+      $sobraFalta['sobra'] = 0;
+    } 
+    else {
+      $sobraFalta['falta'] = 0;
+      $sobraFalta['sobra'] = $auditSobraEFalta['audit_quantity'] - $auditSobraEFalta['packed_quantity'];
+    }
+
+    $auditSobraEFalta = CartonItemModel::where($where)->update([
+      'remaining_quantity' => $sobraFalta['falta'],
+      'exceed_quantity' => $sobraFalta['sobra'],
+    ]);
+
   }
 
   function closeAuditItem(Request $request)
@@ -167,22 +210,11 @@ class CartonController extends Controller
     ) {
       $audit = $audit
         ::where($where)
-        ->update(['audit_status' => $request['status']]);
+        ->update(['audit_status' => $request['status']]);      
       echo json_encode(['msg' => 'Ok']);
     } else {
       echo json_encode(['msg' => 'nOk']);
     }
-
-    // $carton->itemsPacked()->attach($productColletcion['id'], [
-    //     'packed_quantity' => $audit['packed_quantity'],
-    //     'audit_quantity' => $audit['audit_quantity'],
-    //     'remaining_quantity' => $audit['remaining_quantity'],
-    //     'exceed_quantity' => $audit['exceed_quantity'],
-    //     'damaged_quantity' => $audit['damaged_quantity'],
-    //     'items_status' => $audit['items_status'],
-    //     'audit_user' => $audit['audit_user'],
-    //     'audit_status' => $request['status']
-    // ]);
   }
 
   function closeAuditCarton(Request $request)
