@@ -75,7 +75,10 @@ class CartonController extends Controller
 
   public function listCartons()
   {
-    $cartons = CartonModel::all();
+    $cartons = CartonModel::where('status', '!=', '1')
+    ->orWhereNull('status')
+    ->orderBy('document')
+    ->get();
 
     return view('audit/list', [
       'msg' => 'Auditoria Upload',
