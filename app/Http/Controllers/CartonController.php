@@ -148,12 +148,12 @@ class CartonController extends Controller
 
   public function auditItemAddQuantity(Request $request){
 
-    // $carton = CartonModel::where('id', $request['carton'])->first();
+    $carton = CartonModel::where('id', $request['carton'])->first();
 
-    // $update_carton = $carton
-    //   ->update([
-    //   'status' => '2',
-    //   ]);
+    $update_carton = $carton
+      ->update([
+      'status' => '2',
+      ]);
 
     $productColletcion = ProductModel
       ::where('partnumber', $request['partnumber'])
@@ -189,7 +189,7 @@ class CartonController extends Controller
       'remaining_quantity' => $sobraFalta['falta'],
       'exceed_quantity' => $sobraFalta['sobra'],
     ]);
-
+    echo json_encode(['msg' => 'Ok']);
   }
 
   function closeAuditItem(Request $request)
@@ -263,4 +263,14 @@ class CartonController extends Controller
       $response['msg'] = 'Ok';
       echo json_encode($response);
   }
+
+  public function addInfoCarton(Request $request){
+    $carton = CartonModel::where('id', $request['carton'])
+    ->first()
+    ->update([
+        'observations' => $request['info'],
+      ]);
+
+      echo json_encode(['msg' => 'Ok']);
+  } 
 }
