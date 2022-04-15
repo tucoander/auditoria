@@ -25,8 +25,28 @@
       <div class="col-md-6 p-1">
         <div class="card">
             <div class="card-header">
-                {{ $carton->shipping_hu }}
+                <div class="container-fluid m-0">
+                <div class="d-flex justify-content-between">
+                    <div>{{ $carton->shipping_hu }}</div>
+                    @if(is_null($carton->status))
+                    <div>
+                        <span class="badge bg-danger" style="right: 0;">Pendente</span>
+                    </div>
+                    @elseif ($carton->status == 2)
+                    <div>
+                        <span class="badge bg-warning" style="right: 0;">Em andamento</span>
+                    </div>
+                    @else
+                    <div>
+                        <span class="badge bg-sucess" style="right: 0;">Completo</span>
+                    </div>
+                    @endif
+                </div>
             </div>
+                
+                
+                
+        </div>
             <div class="card-body">
                 
                 <table class="table">
