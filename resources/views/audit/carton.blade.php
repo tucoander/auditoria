@@ -117,7 +117,14 @@
                 <button type="button" class="btn btn-dark" onclick="exceedItem()" style="width: 100%;">Item Excedente</button>
             </div>
             <div class="col-3">
-                <button type="button" class="btn btn-dark" onclick="addInformation()" style="width: 100%;">Inserir Observações</button>
+                <button 
+                    type="button" 
+                    class="btn btn-dark" 
+                    style="width: 100%;"
+                    data-bs-toggle="modal" data-bs-target="#itemInformation" data-bs-whatever="@mdo"
+                >
+                Inserir Observações
+                </button>
             </div>
             <div class="col-3">
                 <button 
@@ -188,6 +195,35 @@
   </div>
 </div>
 
+<div class="modal fade" id="itemInformation" tabindex="-1" aria-labelledby="itemInformationLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-ml">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="itemInformationLabel">Informações</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form  action=""  method="POST" id="modal-info">
+            @csrf
+            <div class="form-floating">
+                <textarea 
+                class="form-control" 
+                placeholder="Insira as informações aqui" 
+                id="informationInput"
+                maxlength="450"
+                style="height: 200px">{{  $carton->observations }}</textarea>
+                <label for="informationInput">Informações Adicionais</label>
+            </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+        <button type="button" class="btn btn-primary" onclick="addInformation()">Inserir</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal fade" id="confirmation" tabindex="-1" aria-labelledby="confirmationLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-ml">
     <div class="modal-content">
@@ -207,7 +243,30 @@
 
 <script>
     function exceedItem(){alert("Item lançado")}
-    function addInformation(){alert("Informação inserida")}
+    function addInformation(){
+        var elements = document.getElementById("itemInformation")
+        var carton = new String('{{ $carton->id }}');
+        var token = document.querySelector("meta[name][content]").attributes[1].value 
+        var formData = new FormData();
+        var cartonInfo = document.getElementById("informationInput").value;
+
+        console.log([carton, cartonInfo]);
+        
+        formData.append('carton', carton);
+        formData.append('info', cartonInfo);
+
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.onreadystatechange = function() {
+            if(xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+                var response = JSON.parse(xmlHttp.responseText);
+                console.log(response);
+                document.location.reload(true);
+            }
+        }
+        xmlHttp.open("post", "/audit/carton/info"); 
+        xmlHttp.setRequestHeader('X-CSRF-Token', token);
+        xmlHttp.send(formData);
+    }
     function closeAuditBox(){
         
         var carton = new String('{{ $carton->id }}');
@@ -363,10 +422,17 @@
     line.value = data.line
     })
 
+    var information = document.getElementById('itemInformation');
+    information.addEventListener('show.bs.modal', function (event) {
+        // Button that triggered the modal
+        var buttonInformation = event.relatedTarget
+        addInformation();
+    });
+
     var confirmation = document.getElementById('confirmation');
     confirmation.addEventListener('show.bs.modal', function (event) {
         // Button that triggered the modal
-        var button2 = event.relatedTarget
+        var buttonClose = event.relatedTarget
         closeAuditBox();
     });
 </script>
