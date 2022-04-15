@@ -120,7 +120,14 @@
                 <button type="button" class="btn btn-dark" onclick="addInformation()" style="width: 100%;">Inserir Observações</button>
             </div>
             <div class="col-3">
-                <button type="button" class="btn btn-primary" onclick="closeAuditBox()" style="width: 100%;">Finalizar Auditoria</button>
+                <button 
+                type="button" 
+                class="btn btn-primary" 
+                style="width: 100%;" 
+                data-bs-toggle="modal" data-bs-target="#confirmation" data-bs-whatever="@mdo"
+                >
+                Finalizar Auditoria
+                </button>
             </div>
         </div>
     </div>
@@ -181,6 +188,23 @@
   </div>
 </div>
 
+<div class="modal fade" id="confirmation" tabindex="-1" aria-labelledby="confirmationLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-ml">
+    <div class="modal-content">
+      <div class="modal-header">
+        Finalizar auditoria
+      </div>
+      <div class="modal-body">
+        Deseja realmente finalizar essa auditoria e confirmar as faltas e sobras?
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal">Não</button>
+        <button type="button" class="btn btn-primary" onclick="closeAuditBox()">Sim</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <script>
     function exceedItem(){alert("Item lançado")}
     function addInformation(){alert("Informação inserida")}
@@ -197,7 +221,7 @@
             if(xmlHttp.readyState == 4 && xmlHttp.status == 200) {
                 var response = JSON.parse(xmlHttp.responseText);
                 console.log(response);
-                
+                document.location.reload(true);
             }
         }
         xmlHttp.open("post", "/audit/carton/close"); 
@@ -229,6 +253,7 @@
     }
 
     }
+
     function fecha(){
         var myModalEl = document.querySelector('#itemAudit');
         var modal = bootstrap.Modal.getOrCreateInstance(myModalEl);
@@ -337,6 +362,13 @@
     carton.value = data.carton
     line.value = data.line
     })
+
+    var confirmation = document.getElementById('confirmation');
+    confirmation.addEventListener('show.bs.modal', function (event) {
+        // Button that triggered the modal
+        var button2 = event.relatedTarget
+        closeAuditBox();
+    });
 </script>
 
 
