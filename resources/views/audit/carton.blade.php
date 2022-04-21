@@ -114,7 +114,11 @@
         </div>
         <div class="row justify-content-between align-items-center">
             <div class="col-3">
-                <button type="button" class="btn btn-dark" onclick="exceedItem()" style="width: 100%;">Item Excedente</button>
+                <button 
+                type="button" 
+                class="btn btn-dark"  
+                style="width: 100%;"
+                data-bs-toggle="modal" data-bs-target="#itemExceed" >Item Excedente</button>
             </div>
             <div class="col-3">
                 <button 
@@ -195,6 +199,70 @@
   </div>
 </div>
 
+<div class="modal fade" id="itemExceed" tabindex="-1" aria-labelledby="itemExceedLabel" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-centered modal-ml">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="itemExceedLabel">Novo item</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+        <form  action="/audit/teste"  method="POST" id="modal-audit">
+            @csrf
+            <div class="mb-3 row">
+                <label for="exceed_partnumber" class="col-sm-4 col-form-label"><b>Partnumber</b></label>
+                <div class="col-sm-8">
+                    <input 
+                    type="text"  
+                    class="form-control"
+                    id="exceed_partnumber"
+                     name="exceed_partnumber"
+                     value="">
+                </div>
+            </div>
+            <div class="mb-3 row">
+                <label for="exceed_description" class="col-sm-4 col-form-label"><b>Descrição</b></label>
+                <div class="col-sm-8">
+                    <input 
+                    type="text"  
+                    class="form-control"
+                    id="exceed_description"
+                     name="exceed_description"
+                     value="">
+                </div>
+            </div>
+            <!-- <div class="row">
+                <div class="col">
+                    <div class="mb-3 row">
+                        <label for="exceed_packed_quantity" class="col-sm-6 col-form-label"><b>Quantidade embalada:</b></label>
+                        <div class="col-sm-2">
+                            <input type="text" class="form-control-plaintext" id="exceed_packed_quantity" name="exceed_packed_quantity">
+                        </div>
+                    </div>
+                </div>
+            </div> -->
+            <div class="row">
+                <div class="col">
+                    <div class="mb-3 row">
+                        <label for="exceed_audit_quantity" class="col-sm-6 col-form-label"><b>Quantidade auditada:</b></label>
+                        <div class="col-sm-3">
+                            <input type="number" class="form-control" id="exceed_audit_quantity" name="exceed_audit_quantity">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <input type="hidden" id="carton" name="carton" value="">
+            <input type="hidden" id="line" name="line" value="">
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Fechar</button>
+        <button type="button" class="btn btn-primary" onclick="exceedItem()">Auditar</button>
+      </div>
+    </div>
+  </div>
+</div>
+
 <div class="modal fade" id="itemInformation" tabindex="-1" aria-labelledby="itemInformationLabel" aria-hidden="true">
   <div class="modal-dialog modal-dialog-centered modal-ml">
     <div class="modal-content">
@@ -242,7 +310,36 @@
 </div>
 
 <script>
-    function exceedItem(){alert("Item lançado")}
+    function exceedItem(){
+        var partnumber = document.getElementById("exceed_partnumber").value;
+        var quantity = document.getElementById("exceed_audit_quantity").value;
+        var description = document.getElementById("exceed_description").value;
+        var carton = new String('{{ $carton->id }}');
+        var token = document.querySelector("meta[name][content]").attributes[1].value;
+        var formData = new FormData();
+        
+        formData.append('carton', carton);
+        formData.append('partnumber', partnumber);
+        formData.append('quantity', quantity);
+        formData.append('description', description);
+
+        var xmlHttp = new XMLHttpRequest();
+        xmlHttp.onreadystatechange = function() {
+            if(xmlHttp.readyState == 4 && xmlHttp.status == 201) {
+                var response = JSON.parse(xmlHttp.responseText);
+                console.log(response);
+                document.location.reload(true);
+                console.log("Reload");
+            }
+            else if(xmlHttp.readyState == 4 && xmlHttp.status != 201){
+                alert("Falar com administrador erro inesperado");
+            }
+        }
+        xmlHttp.open("post", "/audit/carton/exceed"); 
+        xmlHttp.setRequestHeader('X-CSRF-Token', token);
+        xmlHttp.send(formData);
+    }
+
     function addInformation(){
         var elements = document.getElementById("itemInformation")
         var carton = new String('{{ $carton->id }}');
@@ -257,10 +354,12 @@
 
         var xmlHttp = new XMLHttpRequest();
         xmlHttp.onreadystatechange = function() {
-            if(xmlHttp.readyState == 4 && xmlHttp.status == 200) {
+            if(xmlHttp.readyState == 4 && xmlHttp.status == 201) {
                 var response = JSON.parse(xmlHttp.responseText);
                 console.log(response);
                 document.location.reload(true);
+            }else{
+                alert("Falar com administrador erro inesperado");
             }
         }
         xmlHttp.open("post", "/audit/carton/info"); 
@@ -426,14 +525,18 @@
     information.addEventListener('show.bs.modal', function (event) {
         // Button that triggered the modal
         var buttonInformation = event.relatedTarget
-        addInformation();
     });
 
     var confirmation = document.getElementById('confirmation');
     confirmation.addEventListener('show.bs.modal', function (event) {
         // Button that triggered the modal
         var buttonClose = event.relatedTarget
-        closeAuditBox();
+    });
+
+    var exceed = document.getElementById('itemExceed');
+    exceed.addEventListener('show.bs.modal', function (event) {
+        // Button that triggered the modal
+        var buttonClose = event.relatedTarget
     });
 </script>
 
