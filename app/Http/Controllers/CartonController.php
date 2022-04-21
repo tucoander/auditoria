@@ -76,9 +76,9 @@ class CartonController extends Controller
   public function listCartons()
   {
     $cartons = CartonModel::where('status', '!=', '1')
-    ->orWhereNull('status')
-    ->orderBy('document')
-    ->get();
+      ->orWhereNull('status')
+      ->orderBy('document')
+      ->get();
 
     return view('audit/list', [
       'msg' => 'Auditoria Upload',
@@ -105,8 +105,7 @@ class CartonController extends Controller
 
     $carton = $carton::where('id', $request['carton'])->first();
 
-    $update_carton = $carton
-    ->update([
+    $update_carton = $carton->update([
       'status' => '2',
     ]);
 
@@ -142,32 +141,33 @@ class CartonController extends Controller
       'remaining_quantity' => $sobraFalta['falta'],
       'exceed_quantity' => $sobraFalta['sobra'],
     ]);
-   
+
     echo json_encode(['msg' => 'Ok']);
   }
 
-  public function auditItemAddQuantity(Request $request){
-
+  public function auditItemAddQuantity(Request $request)
+  {
     $carton = CartonModel::where('id', $request['carton'])->first();
 
-    $update_carton = $carton
-      ->update([
+    $update_carton = $carton->update([
       'status' => '2',
-      ]);
+    ]);
 
-    $productColletcion = ProductModel
-      ::where('partnumber', $request['partnumber'])
-      ->first();
+    $productColletcion = ProductModel::where(
+      'partnumber',
+      $request['partnumber']
+    )->first();
     $where = [
-        'carton_id' => $request['carton'],
-        'product_id' => $productColletcion['id'],
-        'line' => $request['line'],
-      ];
+      'carton_id' => $request['carton'],
+      'product_id' => $productColletcion['id'],
+      'line' => $request['line'],
+    ];
 
     $auditUpdate = CartonItemModel::where($where)->first();
 
     $auditUpdate = $auditUpdate::where($where)->update([
-      'audit_quantity' => $auditUpdate->audit_quantity + $request['audit_quantity'],
+      'audit_quantity' =>
+        $auditUpdate->audit_quantity + $request['audit_quantity'],
       'items_status' => true,
       'audit_user' => Auth::user()->username,
     ]);
@@ -176,13 +176,19 @@ class CartonController extends Controller
 
     $sobraFalta = [];
 
-    if ($auditSobraEFalta['packed_quantity'] >= $auditSobraEFalta['audit_quantity']) {
-      $sobraFalta['falta'] = $auditSobraEFalta['packed_quantity'] - $auditSobraEFalta['audit_quantity'];
+    if (
+      $auditSobraEFalta['packed_quantity'] >=
+      $auditSobraEFalta['audit_quantity']
+    ) {
+      $sobraFalta['falta'] =
+        $auditSobraEFalta['packed_quantity'] -
+        $auditSobraEFalta['audit_quantity'];
       $sobraFalta['sobra'] = 0;
-    } 
-    else {
+    } else {
       $sobraFalta['falta'] = 0;
-      $sobraFalta['sobra'] = $auditSobraEFalta['audit_quantity'] - $auditSobraEFalta['packed_quantity'];
+      $sobraFalta['sobra'] =
+        $auditSobraEFalta['audit_quantity'] -
+        $auditSobraEFalta['packed_quantity'];
     }
 
     $auditSobraEFalta = CartonItemModel::where($where)->update([
@@ -210,7 +216,7 @@ class CartonController extends Controller
     ) {
       $audit = $audit
         ::where($where)
-        ->update(['audit_status' => $request['status']]);      
+        ->update(['audit_status' => $request['status']]);
       echo json_encode(['msg' => 'Ok']);
     } else {
       echo json_encode(['msg' => 'nOk']);
@@ -228,7 +234,6 @@ class CartonController extends Controller
     $audit = $audit::where($where)->get();
 
     foreach ($audit as $line) {
-      
       if ($line->items_status != 1) {
         $sobra = 0;
         $falta = 0;
@@ -237,7 +242,6 @@ class CartonController extends Controller
         } elseif ($line->audit_quantity < $line->packed_quantity) {
           $falta = $line->packed_quantity - $line->audit_quantity;
         }
-        
 
         $where_update = [
           'carton_id' => $request->carton,
@@ -251,26 +255,91 @@ class CartonController extends Controller
           'exceed_quantity' => $sobra,
         ]);
       }
-      
     }
     $where_carton = [
-        'id' => $request->carton,
-      ];
+      'id' => $request->carton,
+    ];
     $update_carton = CartonModel::where($where_carton)->update([
-        'status' => '1',
-      ]);
-      $response = array();
-      $response['msg'] = 'Ok';
-      echo json_encode($response);
+      'status' => '1',
+    ]);
+    $response = [];
+    $response['msg'] = 'Ok';
+    echo json_encode($response);
   }
 
-  public function addInfoCarton(Request $request){
+  public function addInfoCarton(Request $request)
+  {
     $carton = CartonModel::where('id', $request['carton'])
-    ->first()
-    ->update([
+      ->first()
+      ->update([
         'observations' => $request['info'],
       ]);
 
-      echo json_encode(['msg' => 'Ok']);
-  } 
+    echo json_encode(['msg' => 'Ok']);
+  }
+
+  public function addExceedItem(Request $request)
+  {
+    try {
+      $product = ProductModel::where(
+        'partnumber',
+        $request['partnumber']
+      )->first();
+
+      if (is_null($product)) {
+        $product = new ProductModel([
+          'id' => Str::uuid(),
+          'partnumber' => $request['partnumber'],
+          'description' => $request['description'],
+        ]);
+
+        $product->save();
+      }
+
+      $line = CartonItemModel::where('carton_id', $request['carton'])->max('line');
+
+      $newCarton = new CartonItemModel([
+        'carton_id' => $request['carton'],
+        'product_id' => $product->id,
+        'packed_quantity' => 0,
+        'audit_quantity' => $request['quantity'],
+        'remaining_quantity' => 0,
+        'exceed_quantity' => $request['quantity'],
+        'damaged_quantity' => 0,
+        'items_status' => false,
+        'line' => intval($line)+1,
+      ]);
+
+      $newCarton->save();
+
+      return response()->json(
+        [
+          'message' => 'Prduct inserted',
+          'response' => $newCarton,
+          'error_code' => 0
+        ],
+        201
+      );
+    } catch (\Throwable $th) {
+
+      if ($th instanceof \PDOException) {
+        return response()->json(
+          [
+            'message' => 'SQL error',
+            'error_code' => $th->getCode()
+          ],
+          400
+        );
+      }
+      return response()->json(
+        [
+          'message' => $th->getMessage(),
+          'error_code' => $th->getCode()
+        ],
+        400
+      );
+    }
+
+    $newCarton->save();
+  }
 }
