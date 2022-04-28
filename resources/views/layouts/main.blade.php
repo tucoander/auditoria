@@ -55,7 +55,7 @@
                             <li><a class="dropdown-item" href="/cartons/show">Consultar Caixas</a></li>
                         </ul>
                     </li>
-                    <li><a href="#" class="nav-link px-2 text-danger">About</a></li>
+                    <li><a href="/audit/history" class="nav-link px-2 text-danger">Histórico</a></li>
                 </ul>
                 @if (Route::has('login') && Auth::check())
 
