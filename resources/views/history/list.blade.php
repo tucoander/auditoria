@@ -85,9 +85,6 @@
             document.getElementById("history").submit(); 
         }
         function exportHistory(){
-            // var inputHu = document.getElementById("inputHu").value;
-            // var inputDateFrom = document.getElementById("inputDateFrom").value;
-            // var inputDateTo = document.getElementById("inputDateTo").value;
             const queryString = window.location.search;
             const urlParams = new URLSearchParams(queryString);
 
