@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ProductController;
 use App\Http\Controllers\CartonController;
+use App\Http\Controllers\HistoryAuditController;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -81,6 +82,14 @@ Route::post('/audit/carton/info', [CartonController::class, 'addInfoCarton'])
 Route::post('/audit/carton/exceed', [CartonController::class, 'addExceedItem'])
   ->middleware(['auth'])
   ->name('add_info_carton');
+
+Route::get('/audit/history', [HistoryAuditController::class, 'index'])
+  ->middleware(['auth'])
+  ->name('audit');
+
+Route::get('/audit/history/export', [HistoryAuditController::class, 'export'])
+  ->middleware(['auth'])
+  ->name('audit');
 
 //Dashboard padrao
 Route::get('/dashboard', function () {
