@@ -17,6 +17,7 @@ class CartonItemModel extends Pivot
         'exceed_quantity',
         'damaged_quantity',
         'items_status',
-        'line'
+        'line',
+        'audit_user'
     ];
 }
